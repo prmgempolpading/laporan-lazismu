@@ -1,137 +1,117 @@
-// ============================================================
-// KONFIGURASI DASHBOARD LAZIZMU
-// ============================================================
+// ============================================
+// CONFIGURATION - Lazizmu PRM Gempolpading
+// Simpan di: assets/js/config.js
+// ============================================
 
 const CONFIG = {
-    WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbwsCZ1qtE_NZ5i8PIcB7MbvJHcTpAN6sVa5z_W-AkGsTtKjhT4FMsUWfgcT_IL3CFv_mQ/exec',
-    FETCH_TIMEOUT: 30000,
-    MAX_RETRIES: 3,
-    RETRY_DELAY: 2000,
-    REFRESH_INTERVAL: 60000,
-    ROWS_PER_PAGE: 50,
+  // ===== APPS SCRIPT URL =====
+  // GANTI DENGAN URL WEB APP ANDA
+  // Cara dapat: Deploy > New deployment > Web app > Copy URL
+  APP_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz4gErTvIMA9lCG1TMR4s_NU48roMM8knwH2TVS0nOwMA2bKK74y4SbYBPWKregtYnKYw/exec',
+  
+  // ===== GITHUB REPO =====
+  GITHUB_RAW: 'https://raw.githubusercontent.com/prmgempolpading/laporan-lazismu/main',
+  
+  // ===== LOGO PATH =====
+  LOGO: {
+    main: 'assets/logo-lazizmu.png',
+    favicon: 'assets/favicon.ico',
+    watermark: 'assets/watermark.png',
+    // Background per sheet: assets/bg-[sheetname].png
+    // Logo per sheet: assets/logo-[sheetname].png
+  },
+  
+  // ===== WARNA THEME =====
+  COLORS: {
+    primary: '#1E3A5F',     // Biru Lazizmu
+    secondary: '#F58220',    // Oren Lazizmu
+    primaryLight: '#3A5F8A',
+    secondaryLight: '#FAA94C',
+    gradient: 'linear-gradient(135deg, #1E3A5F 0%, #F58220 100%)',
+    gradientLight: 'linear-gradient(135deg, #3A5F8A 0%, #FAA94C 100%)',
     
-    COLORS: {
-        primary: '#2C3E50',
-        secondary: '#3498DB',
-        success: '#27AE60',
-        danger: '#E74C3C',
-        warning: '#F39C12',
-        info: '#1ABC9C',
-        purple: '#8E44AD',
-        orange: '#E67E22'
-    },
+    // Warna untuk card/chart
+    chartColors: [
+      '#1E3A5F', '#F58220', '#2ECC71', '#E74C3C', 
+      '#3498DB', '#9B59B6', '#1ABC9C', '#E67E22',
+      '#34495E', '#16A085', '#27AE60', '#2980B9'
+    ],
     
-    CHART_CONFIG: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    padding: 20,
-                    usePointStyle: true,
-                    pointStyle: 'circle',
-                    font: { size: 12, weight: '600' }
-                }
-            }
-        },
-        animation: {
-            duration: 1000,
-            easing: 'easeInOutQuart'
-        }
+    status: {
+      success: '#2ECC71',
+      warning: '#F1C40F',
+      danger: '#E74C3C',
+      info: '#3498DB'
     }
+  },
+  
+  // ===== PAGINATION =====
+  PAGINATION: {
+    itemsPerPage: 20,
+    maxButtons: 5
+  },
+  
+  // ===== AUTO REFRESH =====
+  AUTO_REFRESH: {
+    enabled: true,
+    interval: 300000, // 5 menit
+    onFocus: true // Refresh saat tab aktif
+  },
+  
+  // ===== FORMAT =====
+  FORMAT: {
+    currency: 'Rp',
+    date: 'DD MMMM YYYY',
+    locale: 'id-ID',
+    numberFormat: {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }
+  },
+  
+  // ===== ANIMASI =====
+  ANIMATIONS: {
+    enabled: true,
+    duration: 300,
+    delay: 100
+  },
+  
+  // ===== DASHBOARD =====
+  DASHBOARD: {
+    cards: [
+      { id: 'totalMasuk', title: 'Total Kas Masuk', icon: 'fa-arrow-down', color: 'primary' },
+      { id: 'totalKeluar', title: 'Total Kas Keluar', icon: 'fa-arrow-up', color: 'secondary' },
+      { id: 'totalSaldo', title: 'Total Saldo Akhir', icon: 'fa-wallet', color: 'success' },
+      { id: 'totalDonatur', title: 'Total Donatur', icon: 'fa-users', color: 'info' }
+    ],
+    charts: {
+      bar: true,
+      pie: true,
+      line: true
+    }
+  }
 };
 
-// ============================================================
-// FUNGSI UTILITY
-// ============================================================
-
-function formatRupiah(angka) {
-    if (angka === undefined || angka === null || isNaN(angka)) {
-        return 'Rp 0';
-    }
-    return new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-    }).format(angka);
+// ===== HELPER FUNCTIONS =====
+function getLogoForSheet(sheetName) {
+  // Coba cari logo spesifik untuk sheet
+  const fileName = sheetName.toLowerCase().replace(/\s+/g, '-');
+  return `${CONFIG.GITHUB_RAW}/assets/logo-${fileName}.png`;
 }
 
-function formatRupiahShort(angka) {
-    if (angka === undefined || angka === null || isNaN(angka)) {
-        return 'Rp0';
-    }
-    if (angka >= 1000000000) {
-        return 'Rp' + (angka / 1000000000).toFixed(1) + 'M';
-    }
-    if (angka >= 1000000) {
-        return 'Rp' + (angka / 1000000).toFixed(1) + 'Jt';
-    }
-    if (angka >= 1000) {
-        return 'Rp' + (angka / 1000).toFixed(1) + 'K';
-    }
-    return 'Rp' + angka;
+function getBackgroundForSheet(sheetName) {
+  const fileName = sheetName.toLowerCase().replace(/\s+/g, '-');
+  return `${CONFIG.GITHUB_RAW}/assets/bg-${fileName}.png`;
 }
 
-function formatDate(date) {
-    if (!date) return '-';
-    try {
-        const d = new Date(date);
-        if (isNaN(d.getTime())) return '-';
-        return d.toLocaleDateString('id-ID', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    } catch {
-        return '-';
-    }
+function getSheetColor(index) {
+  const colors = CONFIG.COLORS.chartColors;
+  return colors[index % colors.length];
 }
 
-function formatDateShort(date) {
-    if (!date) return '-';
-    try {
-        const d = new Date(date);
-        if (isNaN(d.getTime())) return '-';
-        return d.toLocaleDateString('id-ID', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    } catch {
-        return '-';
-    }
-}
-
-function formatTime(date) {
-    if (!date) return '-';
-    try {
-        const d = new Date(date);
-        if (isNaN(d.getTime())) return '-';
-        return d.toLocaleTimeString('id-ID', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        });
-    } catch {
-        return '-';
-    }
-}
-
-function formatDateTime(date) {
-    return formatDate(date) + ' ' + formatTime(date);
-}
-
-function safeParseFloat(value) {
-    if (value === undefined || value === null || value === '') return 0;
-    const parsed = parseFloat(value.toString().replace(/,/g, ''));
-    return isNaN(parsed) ? 0 : parsed;
-}
-
-function truncateText(text, length = 50) {
-    if (!text) return '';
-    if (text.length <= length) return text;
-    return text.substring(0, length) + '...';
+function getGradientForSheet(index) {
+  const colors = CONFIG.COLORS.chartColors;
+  const c1 = colors[index % colors.length];
+  const c2 = colors[(index + 1) % colors.length];
+  return `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`;
 }
