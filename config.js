@@ -3,19 +3,13 @@
 // ============================================================
 
 const CONFIG = {
-    // ============ WEB APP URL ============
-    // ISI DENGAN URL WEB APP ANDA SETELAH DEPLOY
-    WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbzEyyJx_Gs0e1VjnVV03Fzunadsc3kmeD1htVGkGhywyJXr-E7vsFjgiPcrmfcbOaKyFQ/exec',
-    
-    // ============ TIMEOUT & RETRY ============
+    WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbwsCZ1qtE_NZ5i8PIcB7MbvJHcTpAN6sVa5z_W-AkGsTtKjhT4FMsUWfgcT_IL3CFv_mQ/exec',
     FETCH_TIMEOUT: 30000,
     MAX_RETRIES: 3,
     RETRY_DELAY: 2000,
+    REFRESH_INTERVAL: 60000,
+    ROWS_PER_PAGE: 50,
     
-    // ============ REFRESH INTERVAL ============
-    REFRESH_INTERVAL: 60000, // 1 menit
-    
-    // ============ TEMA & WARNA ============
     COLORS: {
         primary: '#2C3E50',
         secondary: '#3498DB',
@@ -27,7 +21,6 @@ const CONFIG = {
         orange: '#E67E22'
     },
     
-    // ============ KONFIGURASI GRAFIK ============
     CHART_CONFIG: {
         responsive: true,
         maintainAspectRatio: false,
@@ -46,21 +39,6 @@ const CONFIG = {
             duration: 1000,
             easing: 'easeInOutQuart'
         }
-    },
-    
-    // ============ KONFIGURASI TABEL ============
-    TABLE_CONFIG: {
-        rowsPerPage: 50,
-        enableSearch: true,
-        enableSort: true
-    },
-    
-    // ============ FORMAT ============
-    FORMAT: {
-        currency: 'IDR',
-        locale: 'id-ID',
-        dateFormat: 'dd MMMM yyyy',
-        timeFormat: 'HH:mm:ss'
     }
 };
 
@@ -105,6 +83,21 @@ function formatDate(date) {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
+            day: 'numeric'
+        });
+    } catch {
+        return '-';
+    }
+}
+
+function formatDateShort(date) {
+    if (!date) return '-';
+    try {
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return '-';
+        return d.toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'short',
             day: 'numeric'
         });
     } catch {
