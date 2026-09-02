@@ -5,22 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
     <title>Dashboard Lazizmu PRM Gempolpoding</title>
     
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        /* ==========================================================
-           ROOT VARIABLES
-           ========================================================== */
         :root {
             --primary: #2C3E50;
             --secondary: #3498DB;
@@ -32,10 +22,6 @@
             --orange: #E67E22;
             --light: #F8F9FA;
             --dark: #2C3E50;
-            --gradient-main: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            --gradient-danger: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            --gradient-warning: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
             --shadow-md: 0 4px 20px rgba(0,0,0,0.10);
             --shadow-lg: 0 8px 40px rgba(0,0,0,0.14);
@@ -44,9 +30,6 @@
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ==========================================================
-           GLOBAL
-           ========================================================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -55,7 +38,6 @@
             position: relative;
         }
 
-        /* Background Watermark */
         body::before {
             content: '';
             position: fixed;
@@ -72,15 +54,11 @@
             pointer-events: none;
         }
 
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #2980b9; }
 
-        /* ==========================================================
-           NAVBAR
-           ========================================================== */
         .navbar-lazizmu {
             background: linear-gradient(135deg, #1a2a3a 0%, #2C3E50 50%, #3498DB 100%);
             padding: 0.8rem 2rem;
@@ -168,9 +146,6 @@
             transform: rotate(90deg);
         }
 
-        /* ==========================================================
-           STATS GRID
-           ========================================================== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -250,9 +225,6 @@
 
         .stat-card .sub i { margin-right: 3px; }
 
-        /* ==========================================================
-           REMINDER CARD
-           ========================================================== */
         .reminder-card {
             background: linear-gradient(135deg, #FF6B6B 0%, #ee5a24 100%);
             border-radius: var(--radius);
@@ -316,9 +288,6 @@
             font-weight: 600;
         }
 
-        /* ==========================================================
-           SHEET NAVIGATION
-           ========================================================== */
         .sheet-nav {
             display: flex;
             gap: 8px;
@@ -375,9 +344,6 @@
             color: white;
         }
 
-        /* ==========================================================
-           CONTENT AREA
-           ========================================================== */
         .content-area {
             padding: 0 20px 20px 20px;
             animation: fadeIn 0.4s ease;
@@ -414,9 +380,6 @@
             margin-left: auto;
         }
 
-        /* ==========================================================
-           CHART GRID
-           ========================================================== */
         .chart-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -451,9 +414,6 @@
             height: 220px;
         }
 
-        /* ==========================================================
-           TABLE
-           ========================================================== */
         .table-wrapper {
             overflow-x: auto;
             border-radius: var(--radius-sm);
@@ -502,9 +462,37 @@
         .table-lazizmu .text-money.positive { color: var(--success); }
         .table-lazizmu .text-money.negative { color: var(--danger); }
 
-        /* ==========================================================
-           LOADING
-           ========================================================== */
+        .pagination-wrapper {
+            padding: 10px 0 5px 0;
+            border-top: 1px solid #e9ecef;
+            background: #fafafa;
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+        }
+
+        .pagination-current {
+            font-weight: 600;
+            color: var(--dark);
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .pagination-buttons .btn {
+            transition: var(--transition);
+            font-weight: 600;
+            padding: 6px 16px;
+        }
+
+        .pagination-buttons .btn:hover:not(:disabled) {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .pagination-buttons .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         .loading-wrapper {
             display: flex;
             flex-direction: column;
@@ -534,9 +522,6 @@
             font-size: 0.9rem;
         }
 
-        /* ==========================================================
-           TOAST
-           ========================================================== */
         .toast-container-custom {
             position: fixed;
             bottom: 24px;
@@ -607,9 +592,6 @@
             to { transform: translateX(120%); opacity: 0; }
         }
 
-        /* ==========================================================
-           ERROR STATE
-           ========================================================== */
         .error-state {
             text-align: center;
             padding: 40px 20px;
@@ -645,9 +627,6 @@
             font-family: monospace;
         }
 
-        /* ==========================================================
-           RESPONSIVE
-           ========================================================== */
         @media (max-width: 992px) {
             .chart-grid { grid-template-columns: 1fr; }
         }
@@ -736,6 +715,24 @@
             .toast-custom {
                 padding: 12px 16px;
             }
+
+            .pagination-wrapper {
+                flex-direction: column;
+                align-items: center !important;
+                gap: 10px;
+            }
+            .pagination-info {
+                font-size: 0.7rem;
+            }
+            .pagination-buttons .btn {
+                font-size: 0.7rem;
+                padding: 4px 10px;
+            }
+            .pagination-current {
+                font-size: 0.7rem;
+                min-width: 80px;
+                padding: 2px 10px !important;
+            }
         }
 
         @media (max-width: 480px) {
@@ -773,9 +770,6 @@
             }
         }
 
-        /* ==========================================================
-           PRINT
-           ========================================================== */
         @media print {
             .navbar-lazizmu {
                 position: relative;
@@ -803,7 +797,6 @@
     <nav class="navbar-lazizmu">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <div class="brand">
-                <!-- GANTI: src dengan path logo Anda -->
                 <img src="assets/images/logo-lazizmu.png" alt="Lazizmu Logo" 
                      onerror="this.style.display='none'">
                 <div>
@@ -949,43 +942,36 @@
             lastUpdate: null
         };
 
+        let currentPage = 1;
+        const rowsPerPage = 50;
+
         // ============================================================
-        // INIT - TANPA CORS, LANGSUNG AKSES WEB APP
+        // INIT
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Dashboard Lazizmu PRM Gempolpoding');
-            console.log('📊 Mode: REAL DATA dari spreadsheet (Direct Access)');
+            console.log('📊 Mode: REAL DATA dari spreadsheet');
 
-            // Cek konfigurasi
             if (!CONFIG.WEB_APP_URL || CONFIG.WEB_APP_URL === 'https://script.google.com/macros/s/YOUR_WEB_APP_ID/exec') {
                 showError('Konfigurasi Belum Selesai',
-                    'Silakan set <strong>WEB_APP_URL</strong> di file config.js dengan URL Web App Anda setelah deploy Apps Script.'
-                    );
+                    'Silakan set <strong>WEB_APP_URL</strong> di file config.js');
                 return;
             }
 
             console.log('🔗 Web App URL:', CONFIG.WEB_APP_URL);
-
-            // Load data
             loadAllData();
-
-            // Auto refresh
             state.refreshInterval = setInterval(refreshData, CONFIG.REFRESH_INTERVAL || 60000);
-
-            // Update waktu
             updateLastUpdate();
         });
 
         // ============================================================
-        // LOAD DATA - MENGGUNAKAN google.script.run (TANPA CORS)
+        // LOAD DATA
         // ============================================================
         function loadAllData() {
             if (state.isLoading) return;
             state.isLoading = true;
-
             showToast('info', '⏳ Memuat data...', 'Mengambil data dari spreadsheet');
 
-            // Gunakan google.script.run (Apps Script native - TANPA CORS)
             if (typeof google !== 'undefined' && google.script) {
                 console.log('📡 Menggunakan google.script.run (native)');
                 google.script.run
@@ -1004,25 +990,22 @@
                     })
                     .getAllSheetData();
             } else {
-                // Fallback: Gunakan fetch (mungkin CORS error)
-                console.warn('⚠️ google.script tidak tersedia, menggunakan fetch (mungkin CORS error)');
+                console.warn('⚠️ google.script tidak tersedia, menggunakan fetch');
                 fetchDataFromWebApp();
             }
         }
 
         // ============================================================
-        // FETCH DATA (FALLBACK - DENGAN CORS HANDLING)
+        // FETCH DATA
         // ============================================================
         function fetchDataFromWebApp(retryCount = 0) {
             const url = CONFIG.WEB_APP_URL;
-
             if (!url || url === 'https://script.google.com/macros/s/YOUR_WEB_APP_ID/exec') {
                 handleDataError('⚠️ Web App URL belum dikonfigurasi');
                 return;
             }
 
             const fetchUrl = url + '?action=getAllData&_t=' + Date.now();
-
             console.log('📡 Menghubungkan ke:', fetchUrl);
 
             const controller = new AbortController();
@@ -1032,54 +1015,39 @@
                     method: 'GET',
                     mode: 'cors',
                     cache: 'no-cache',
-                    headers: {
-                        'Accept': 'application/json'
-                    },
+                    headers: { 'Accept': 'application/json' },
                     signal: controller.signal
                 })
                 .then(response => {
                     clearTimeout(timeoutId);
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
                     return response.json();
                 })
                 .then(data => {
                     state.isLoading = false;
                     if (data.success) {
                         handleDataLoaded(data);
+                    } else if (retryCount < CONFIG.MAX_RETRIES) {
+                        setTimeout(() => fetchDataFromWebApp(retryCount + 1), CONFIG.RETRY_DELAY);
                     } else {
-                        if (retryCount < CONFIG.MAX_RETRIES) {
-                            console.log(`🔄 Retry ${retryCount + 1}/${CONFIG.MAX_RETRIES}...`);
-                            setTimeout(() => {
-                                fetchDataFromWebApp(retryCount + 1);
-                            }, CONFIG.RETRY_DELAY);
-                        } else {
-                            handleDataError(data.error || 'Gagal memuat data dari spreadsheet');
-                        }
+                        handleDataError(data.error || 'Gagal memuat data');
                     }
                 })
                 .catch(error => {
                     clearTimeout(timeoutId);
                     state.isLoading = false;
-
                     console.error('❌ Fetch Error:', error);
 
                     if (error.name === 'AbortError') {
-                        handleDataError('⏰ Timeout: Server tidak merespons dalam ' + (CONFIG.FETCH_TIMEOUT / 1000) +
-                            ' detik');
+                        handleDataError('⏰ Timeout: Server tidak merespons');
                     } else if (error.message.includes('Failed to fetch') || error.message.includes('CORS')) {
                         handleDataError(
                             '❌ Gagal terhubung ke server karena CORS.\n\n' +
                             '📌 SOLUSI: Akses langsung Web App URL ini:\n' +
-                            url + '\n\n' +
-                            '📌 Atau pastikan Web App sudah di-deploy dengan akses "Anyone"'
+                            url
                         );
                     } else if (retryCount < CONFIG.MAX_RETRIES) {
-                        console.log(`🔄 Retry ${retryCount + 1}/${CONFIG.MAX_RETRIES}...`);
-                        setTimeout(() => {
-                            fetchDataFromWebApp(retryCount + 1);
-                        }, CONFIG.RETRY_DELAY);
+                        setTimeout(() => fetchDataFromWebApp(retryCount + 1), CONFIG.RETRY_DELAY);
                     } else {
                         handleDataError(`Gagal terhubung ke server: ${error.message}`);
                     }
@@ -1095,25 +1063,17 @@
             state.lastUpdate = new Date();
 
             if (data.success && data.totalSheets > 0) {
-                // Update stats
                 updateDashboardStats(data);
-
-                // Update sheet navigation
                 updateSheetNavigation(data);
-
-                // Load dashboard view
                 loadDashboardView(data);
-
-                // Update reminder
                 updateReminders(data);
 
-                // Update counters
                 document.getElementById('sheetCount').innerHTML =
                     `<i class="fas fa-layer-group"></i> ${data.totalSheets} Sheets`;
                 document.getElementById('totalRows').textContent = data.totalRows || 0;
 
                 showToast('success', '✅ Data berhasil dimuat!',
-                    `Total ${data.totalSheets} sheet, ${data.totalRows || 0} baris data dari spreadsheet REAL`
+                    `Total ${data.totalSheets} sheet, ${data.totalRows || 0} baris data`
                 );
             } else {
                 handleDataError(data.error || 'Tidak ada data di spreadsheet');
@@ -1124,14 +1084,12 @@
             console.error('❌ Error:', error);
             showToast('error', '❌ Gagal memuat data', error);
 
-            // Tampilkan error di UI
             document.querySelectorAll('.stat-card .value').forEach(el => {
                 el.textContent = '⚠️ Error';
             });
             document.getElementById('totalSheets').textContent = '0';
             document.getElementById('totalDonatur').textContent = '0';
 
-            // Tampilkan error detail
             const wrapper = document.getElementById('tableWrapper');
             if (wrapper) {
                 wrapper.innerHTML = `
@@ -1212,17 +1170,14 @@
         function updateSheetNavigation(data) {
             const nav = document.getElementById('sheetNav');
             const sheetNames = data.sheetNames || [];
-
             nav.innerHTML = '';
 
-            // Dashboard button
             const dashBtn = document.createElement('button');
             dashBtn.className = 'sheet-btn active';
             dashBtn.innerHTML = `<i class="fas fa-th-large"></i> Dashboard <span class="badge-sheet-count">Utama</span>`;
             dashBtn.onclick = () => loadSheet('dashboard');
             nav.appendChild(dashBtn);
 
-            // Sheet buttons
             sheetNames.forEach(name => {
                 const btn = document.createElement('button');
                 btn.className = 'sheet-btn';
@@ -1239,6 +1194,7 @@
         // ============================================================
         function loadSheet(sheetName) {
             state.currentSheet = sheetName;
+            currentPage = 1;
 
             document.querySelectorAll('.sheet-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -1259,7 +1215,7 @@
             } else {
                 document.getElementById('dashboardView').style.display = 'none';
                 document.getElementById('sheetView').style.display = 'block';
-                loadSheetData(sheetName);
+                loadSheetData(sheetName, 1);
             }
         }
 
@@ -1274,9 +1230,11 @@
         }
 
         // ============================================================
-        // LOAD SHEET DATA
+        // LOAD SHEET DATA DENGAN PAGINATION & FORMAT YANG BENAR
         // ============================================================
-        function loadSheetData(sheetName) {
+        function loadSheetData(sheetName, page = 1) {
+            currentPage = page;
+
             const sheetData = state.allData?.sheets?.[sheetName];
             const wrapper = document.getElementById('tableWrapper');
             const title = document.getElementById('sheetTitle').querySelector('span');
@@ -1311,36 +1269,100 @@
                 return;
             }
 
-            let html = '<table class="table-lazizmu"><thead><tr>';
+            const totalPages = Math.ceil(rows.length / rowsPerPage);
+            const startIndex = (page - 1) * rowsPerPage;
+            const endIndex = Math.min(startIndex + rowsPerPage, rows.length);
+            const pageRows = rows.slice(startIndex, endIndex);
+
+            let html = '<div class="table-responsive">';
+            html += '<table class="table-lazizmu"><thead><tr>';
             headers.forEach(h => {
                 html += `<th>${h || '-'}</th>`;
             });
             html += '</tr></thead><tbody>';
 
-            const displayRows = rows.slice(0, 100);
-            displayRows.forEach(row => {
+            pageRows.forEach(row => {
                 html += '<tr>';
-                row.forEach(cell => {
+                row.forEach((cell, idx) => {
                     const val = cell !== undefined && cell !== null ? cell : '-';
-                    const num = parseFloat(val);
-                    if (!isNaN(num) && val !== '') {
-                        html += `<td class="text-money">${formatRupiah(num)}</td>`;
+                    const headerStr = headers[idx] ? headers[idx].toString().toUpperCase() : '';
+
+                    // DETEKSI KOLOM YANG HARUS JADI RP
+                    const isKasMasuk = headerStr.includes('KAS MASUK');
+                    const isKasKeluar = headerStr.includes('KAS KELUAR');
+                    const isSaldo = headerStr.includes('SALDO');
+                    const isDonasi = headerStr.includes('DONASI');
+                    const isMoney = isKasMasuk || isKasKeluar || isSaldo || isDonasi;
+
+                    // DETEKSI TANGGAL
+                    let isDate = false;
+                    if (val !== '-' && typeof val === 'string') {
+                        const dateTest = new Date(val);
+                        if (!isNaN(dateTest.getTime()) && !isMoney) {
+                            isDate = true;
+                        }
+                    } else if (val instanceof Date) {
+                        isDate = true;
+                    }
+
+                    // FORMAT SESUAI JENIS
+                    if (isMoney) {
+                        const num = parseFloat(val);
+                        if (!isNaN(num) && val !== '') {
+                            html += `<td class="text-money">${formatRupiah(num)}</td>`;
+                        } else {
+                            html += `<td>${val}</td>`;
+                        }
+                    } else if (isDate) {
+                        const dateObj = val instanceof Date ? val : new Date(val);
+                        if (!isNaN(dateObj.getTime())) {
+                            html += `<td>${formatDate(dateObj)}</td>`;
+                        } else {
+                            html += `<td>${val}</td>`;
+                        }
                     } else {
+                        // TEXT BIASA (termasuk KETERANGAN)
                         html += `<td>${val}</td>`;
                     }
                 });
                 html += '</tr>';
             });
 
-            if (rows.length > 100) {
-                html +=
-                    `<tr><td colspan="${headers.length}" class="text-center text-muted py-3">
-                        <i class="fas fa-ellipsis-h"></i> Menampilkan 100 dari ${rows.length} baris
-                    </td></tr>`;
+            html += '</tbody></table>';
+            html += '</div>';
+
+            // PAGINATION
+            if (totalPages > 1) {
+                html += `
+                    <div class="pagination-wrapper d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+                        <div class="pagination-info text-muted small">
+                            Menampilkan ${startIndex + 1}-${endIndex} dari ${rows.length} baris
+                        </div>
+                        <div class="pagination-buttons d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="changePage(${page - 1})" ${page <= 1 ? 'disabled' : ''}>
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </button>
+                            <span class="pagination-current d-flex align-items-center px-3 border rounded bg-light small">
+                                Halaman ${page} dari ${totalPages}
+                            </span>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="changePage(${page + 1})" ${page >= totalPages ? 'disabled' : ''}>
+                                Next <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
             }
 
-            html += '</tbody></table>';
             wrapper.innerHTML = html;
+        }
+
+        // ============================================================
+        // CHANGE PAGE
+        // ============================================================
+        function changePage(newPage) {
+            if (state.currentSheet === 'dashboard') return;
+            const sheetName = state.currentSheet;
+            loadSheetData(sheetName, newPage);
         }
 
         // ============================================================
@@ -1379,35 +1401,22 @@
                 }
             });
 
-            // === CHART KAS ===
+            // Chart Kas
             const ctxKas = document.getElementById('chartKas');
             if (ctxKas) {
-                if (state.charts.kas) {
-                    state.charts.kas.destroy();
-                }
+                if (state.charts.kas) state.charts.kas.destroy();
 
                 if (labels.length === 0) {
                     state.charts.kas = new Chart(ctxKas, {
                         type: 'bar',
                         data: {
                             labels: ['Tidak Ada Data'],
-                            datasets: [{
-                                label: 'Kas Masuk',
-                                data: [0],
-                                backgroundColor: '#3498DB'
-                            }, {
-                                label: 'Kas Keluar',
-                                data: [0],
-                                backgroundColor: '#E74C3C'
-                            }]
+                            datasets: [
+                                { label: 'Kas Masuk', data: [0], backgroundColor: '#3498DB' },
+                                { label: 'Kas Keluar', data: [0], backgroundColor: '#E74C3C' }
+                            ]
                         },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { position: 'bottom' }
-                            }
-                        }
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
                     });
                 } else {
                     state.charts.kas = new Chart(ctxKas, {
@@ -1436,29 +1445,12 @@
                                 y: {
                                     beginAtZero: true,
                                     ticks: {
-                                        callback: function(value) {
-                                            return formatRupiahShort(value);
-                                        },
+                                        callback: function(value) { return formatRupiahShort(value); },
                                         font: { size: 10 }
                                     }
                                 },
                                 x: {
-                                    ticks: {
-                                        font: { size: 10 },
-                                        maxRotation: 45
-                                    }
-                                }
-                            },
-                            plugins: {
-                                ...CONFIG.CHART_CONFIG.plugins,
-                                legend: {
-                                    position: 'bottom',
-                                    labels: {
-                                        padding: 15,
-                                        usePointStyle: true,
-                                        pointStyle: 'circle',
-                                        font: { size: 11, weight: '600' }
-                                    }
+                                    ticks: { font: { size: 10 }, maxRotation: 45 }
                                 }
                             }
                         }
@@ -1466,12 +1458,10 @@
                 }
             }
 
-            // === CHART DONASI ===
+            // Chart Donasi
             const ctxDonasi = document.getElementById('chartDonasi');
             if (ctxDonasi) {
-                if (state.charts.donasi) {
-                    state.charts.donasi.destroy();
-                }
+                if (state.charts.donasi) state.charts.donasi.destroy();
 
                 const donasiMap = {};
                 Object.keys(sheets).forEach(name => {
@@ -1505,8 +1495,7 @@
                 const donasiLabels = sortedDonasi.map(d => d[0]);
                 const donasiValues = sortedDonasi.map(d => d[1]);
 
-                const colors = [
-                    '#3498DB', '#E74C3C', '#F39C12', '#27AE60', '#8E44AD',
+                const colors = ['#3498DB', '#E74C3C', '#F39C12', '#27AE60', '#8E44AD',
                     '#1ABC9C', '#E67E22', '#2ECC71', '#9B59B6', '#34495E'
                 ];
 
@@ -1515,21 +1504,12 @@
                         type: 'doughnut',
                         data: {
                             labels: ['Belum Ada Donasi'],
-                            datasets: [{
-                                data: [1],
-                                backgroundColor: ['#e9ecef'],
-                                borderWidth: 0
-                            }]
+                            datasets: [{ data: [1], backgroundColor: ['#e9ecef'], borderWidth: 0 }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                    labels: { font: { size: 11 } }
-                                }
-                            },
+                            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } },
                             cutout: '60%'
                         }
                     });
@@ -1560,8 +1540,7 @@
                                         generateLabels: function(chart) {
                                             const data = chart.data;
                                             return data.labels.map((label, i) => ({
-                                                text: label.length > 20 ? label.substring(0,
-                                                    18) + '...' : label,
+                                                text: label.length > 20 ? label.substring(0, 18) + '...' : label,
                                                 fillStyle: data.datasets[0].backgroundColor[i],
                                                 strokeStyle: data.datasets[0].backgroundColor[i],
                                                 pointStyle: 'circle',
@@ -1573,10 +1552,8 @@
                                 tooltip: {
                                     callbacks: {
                                         label: function(context) {
-                                            const total = context.dataset.data.reduce((a, b) => a + b,
-                                            0);
-                                            const percentage = ((context.parsed / total) * 100).toFixed(
-                                            1);
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = ((context.parsed / total) * 100).toFixed(1);
                                             return `${context.label}: ${formatRupiah(context.parsed)} (${percentage}%)`;
                                         }
                                     }
@@ -1726,13 +1703,12 @@
         // ============================================================
         window.loadSheet = loadSheet;
         window.refreshData = refreshData;
+        window.changePage = changePage;
         window.formatRupiah = formatRupiah;
         window.formatRupiahShort = formatRupiahShort;
         window.formatDate = formatDate;
-        window.formatTime = formatTime;
         window.formatDateTime = formatDateTime;
         window.safeParseFloat = safeParseFloat;
-        window.truncateText = truncateText;
         window.showToast = showToast;
 
         console.log('✅ Dashboard siap digunakan!');
