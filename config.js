@@ -6,7 +6,7 @@ const CONFIG = {
     // ============ WAJIB DIISI ============
     // URL Web App setelah deploy di Apps Script
     // Contoh: https://script.google.com/macros/s/AKfycbxyz123/exec
-    WEB_APP_URL: 'YOUR_WEB_APP_URL_HERE',
+    WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbwOLEzC2eiKrMZ5duEZ-lRtdvb-RfQRjvIJEQgf1taBQZtPP0ATtAYnv0KbuT25RTyVvw/exec',
     
     // ============ TEMA & WARNA ============
     COLORS: {
