@@ -3,10 +3,17 @@
 // ============================================================
 
 const CONFIG = {
-    // ============ WAJIB DIISI ============
-    // URL Web App setelah deploy di Apps Script
-    // Contoh: https://script.google.com/macros/s/AKfycbxyz123/exec
-    WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbwOLEzC2eiKrMZ5duEZ-lRtdvb-RfQRjvIJEQgf1taBQZtPP0ATtAYnv0KbuT25RTyVvw/exec',
+    // ============ WEB APP URL ============
+    // ISI DENGAN URL WEB APP ANDA SETELAH DEPLOY
+    WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbzEyyJx_Gs0e1VjnVV03Fzunadsc3kmeD1htVGkGhywyJXr-E7vsFjgiPcrmfcbOaKyFQ/exec',
+    
+    // ============ TIMEOUT & RETRY ============
+    FETCH_TIMEOUT: 30000,
+    MAX_RETRIES: 3,
+    RETRY_DELAY: 2000,
+    
+    // ============ REFRESH INTERVAL ============
+    REFRESH_INTERVAL: 60000, // 1 menit
     
     // ============ TEMA & WARNA ============
     COLORS: {
@@ -16,15 +23,9 @@ const CONFIG = {
         danger: '#E74C3C',
         warning: '#F39C12',
         info: '#1ABC9C',
-        light: '#ECF0F1',
-        dark: '#2C3E50',
         purple: '#8E44AD',
-        orange: '#E67E22',
-        teal: '#1ABC9C'
+        orange: '#E67E22'
     },
-    
-    // ============ REFRESH INTERVAL ============
-    REFRESH_INTERVAL: 60000, // 1 menit (dalam milidetik)
     
     // ============ KONFIGURASI GRAFIK ============
     CHART_CONFIG: {
@@ -37,10 +38,7 @@ const CONFIG = {
                     padding: 20,
                     usePointStyle: true,
                     pointStyle: 'circle',
-                    font: {
-                        size: 12,
-                        weight: '600'
-                    }
+                    font: { size: 12, weight: '600' }
                 }
             }
         },
@@ -70,7 +68,6 @@ const CONFIG = {
 // FUNGSI UTILITY
 // ============================================================
 
-// Format Rupiah
 function formatRupiah(angka) {
     if (angka === undefined || angka === null || isNaN(angka)) {
         return 'Rp 0';
@@ -83,7 +80,6 @@ function formatRupiah(angka) {
     }).format(angka);
 }
 
-// Format Rupiah dengan desimal (untuk grafik)
 function formatRupiahShort(angka) {
     if (angka === undefined || angka === null || isNaN(angka)) {
         return 'Rp0';
@@ -100,7 +96,6 @@ function formatRupiahShort(angka) {
     return 'Rp' + angka;
 }
 
-// Format Tanggal Indonesia
 function formatDate(date) {
     if (!date) return '-';
     try {
@@ -117,7 +112,6 @@ function formatDate(date) {
     }
 }
 
-// Format Waktu
 function formatTime(date) {
     if (!date) return '-';
     try {
@@ -133,57 +127,18 @@ function formatTime(date) {
     }
 }
 
-// Format Tanggal + Waktu
 function formatDateTime(date) {
     return formatDate(date) + ' ' + formatTime(date);
 }
 
-// Nama Bulan
-function getMonthName(month) {
-    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
-                   'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-    return months[month - 1] || month;
-}
-
-// Nama Hari
-function getDayName(day) {
-    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-    return days[day] || day;
-}
-
-// Random Color (untuk grafik)
-function getRandomColor() {
-    const colors = [
-        '#3498DB', '#E74C3C', '#F39C12', '#27AE60', '#8E44AD',
-        '#1ABC9C', '#E67E22', '#2ECC71', '#9B59B6', '#34495E',
-        '#16A085', '#C0392B', '#2980B9', '#D35400', '#7F8C8D'
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
-}
-
-// Truncate text
-function truncateText(text, length = 50) {
-    if (!text) return '';
-    if (text.length <= length) return text;
-    return text.substring(0, length) + '...';
-}
-
-// Parse angka dengan aman
 function safeParseFloat(value) {
     if (value === undefined || value === null || value === '') return 0;
     const parsed = parseFloat(value.toString().replace(/,/g, ''));
     return isNaN(parsed) ? 0 : parsed;
 }
 
-// Debounce function untuk performance
-function debounce(func, wait = 300) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
+function truncateText(text, length = 50) {
+    if (!text) return '';
+    if (text.length <= length) return text;
+    return text.substring(0, length) + '...';
 }
