@@ -8,7 +8,7 @@
     <!-- META -->
     <meta name="description" content="Dashboard Laporan Keuangan Lazismu PRM Gempolpading">
     <meta name="theme-color" content="#1E3A5F">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     
     <!-- FAVICON -->
     <link rel="icon" href="logo.png" type="image/png">
@@ -459,6 +459,8 @@
             border-bottom: 1px solid #f0f0f0;
             transition: var(--transition);
             border-radius: 6px;
+            flex-wrap: wrap;
+            gap: 5px;
         }
         .donatur-item:hover {
             background: #f8f9fa;
@@ -1011,7 +1013,7 @@ MAIN CONTENT
 </div>
 
 <!-- ============================================================
-JAVASCRIPT - MAIN APPLICATION
+JAVASCRIPT - MAIN APPLICATION (Menggunakan Fetch API)
 ============================================================ -->
 <script>
 // ============================================================
@@ -1079,91 +1081,126 @@ function showLoading(show) {
 }
 
 // ============================================================
-// 5. LOAD DATA - MENGGUNAKAN google.script.run
+// 5. API CALL - MENGGUNAKAN FETCH DENGAN PARAMETER
 // ============================================================
 
-function loadData() {
+async function callApi(action, params = {}) {
+    const url = CONFIG.APP_SCRIPT_URL;
+    
+    // Buat URL dengan parameter
+    const urlParams = new URLSearchParams();
+    urlParams.append('action', action);
+    Object.keys(params).forEach(key => {
+        urlParams.append(key, params[key]);
+    });
+    
+    const fullUrl = url + '?' + urlParams.toString();
+    
+    try {
+        const response = await fetch(fullUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        return data;
+        
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+}
+
+// ============================================================
+// 6. LOAD DATA
+// ============================================================
+
+async function loadData() {
     showLoading(true);
     
-    // Panggil fungsi di Apps Script via google.script.run
-    google.script.run
-        .withSuccessHandler(function(result) {
-            if (result.success) {
-                allData = result;
-                renderNavigation();
-                renderCurrentView();
-                updateLastUpdate(result.lastUpdate);
-                updateDonaturBadge();
-                showToast('✅ Data berhasil dimuat', 'success');
-            } else {
-                showToast('❌ Gagal memuat data: ' + (result.error || 'Unknown error'), 'error');
-                mainContent.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>Gagal Memuat Data</h3>
-                        <p>${result.error || 'Terjadi kesalahan saat mengambil data dari spreadsheet'}</p>
-                        <button class="btn-refresh" style="margin-top:15px;display:inline-flex;" onclick="refreshData()">
-                            <i class="fas fa-sync-alt"></i> Coba Lagi
-                        </button>
-                    </div>
-                `;
-            }
-            showLoading(false);
-        })
-        .withFailureHandler(function(error) {
-            showToast('❌ Error: ' + error.message, 'error');
+    try {
+        const result = await callApi('getAllData');
+        
+        if (result.success) {
+            allData = result;
+            renderNavigation();
+            renderCurrentView();
+            updateLastUpdate(result.lastUpdate);
+            updateDonaturBadge();
+            showToast('✅ Data berhasil dimuat', 'success');
+        } else {
+            showToast('❌ Gagal memuat data: ' + (result.error || 'Unknown error'), 'error');
             mainContent.innerHTML = `
                 <div class="empty-state">
-                    <i class="fas fa-plug"></i>
-                    <h3>Koneksi Gagal</h3>
-                    <p>${error.message || 'Tidak dapat terhubung ke server'}</p>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Gagal Memuat Data</h3>
+                    <p>${result.error || 'Terjadi kesalahan saat mengambil data dari spreadsheet'}</p>
                     <button class="btn-refresh" style="margin-top:15px;display:inline-flex;" onclick="refreshData()">
                         <i class="fas fa-sync-alt"></i> Coba Lagi
                     </button>
                 </div>
             `;
-            showLoading(false);
-        })
-        .getAllData(); // Nama fungsi di appscript.gs
+        }
+        
+    } catch (error) {
+        console.error('Load data error:', error);
+        showToast('❌ Error: ' + error.message, 'error');
+        mainContent.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-plug"></i>
+                <h3>Koneksi Gagal</h3>
+                <p>${error.message || 'Tidak dapat terhubung ke server'}</p>
+                <button class="btn-refresh" style="margin-top:15px;display:inline-flex;" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> Coba Lagi
+                </button>
+            </div>
+        `;
+    }
+    
+    showLoading(false);
 }
 
 // ============================================================
-// 6. REFRESH DATA
+// 7. REFRESH DATA
 // ============================================================
 
-function refreshData() {
+async function refreshData() {
     if (isRefreshing) return;
     isRefreshing = true;
     btnRefresh.classList.add('spinning');
     btnRefresh.disabled = true;
     
-    google.script.run
-        .withSuccessHandler(function(result) {
-            if (result.success) {
-                allData = result.data || result;
-                renderNavigation();
-                renderCurrentView();
-                updateLastUpdate(allData.lastUpdate);
-                updateDonaturBadge();
-                showToast('✅ Data berhasil di-refresh', 'success');
-            } else {
-                showToast('❌ Refresh gagal: ' + (result.error || 'Unknown error'), 'error');
-            }
-            isRefreshing = false;
-            btnRefresh.classList.remove('spinning');
-            btnRefresh.disabled = false;
-        })
-        .withFailureHandler(function(error) {
-            showToast('❌ Refresh error: ' + error.message, 'error');
-            isRefreshing = false;
-            btnRefresh.classList.remove('spinning');
-            btnRefresh.disabled = false;
-        })
-        .refreshCache(); // Nama fungsi di appscript.gs
+    try {
+        const result = await callApi('refreshCache');
+        
+        if (result.success) {
+            allData = result.data || result;
+            renderNavigation();
+            renderCurrentView();
+            updateLastUpdate(allData.lastUpdate);
+            updateDonaturBadge();
+            showToast('✅ Data berhasil di-refresh', 'success');
+        } else {
+            showToast('❌ Refresh gagal: ' + (result.error || 'Unknown error'), 'error');
+        }
+        
+    } catch (error) {
+        showToast('❌ Refresh error: ' + error.message, 'error');
+    }
+    
+    isRefreshing = false;
+    btnRefresh.classList.remove('spinning');
+    btnRefresh.disabled = false;
 }
 
 // ============================================================
-// 7. NAVIGATION
+// 8. NAVIGATION
 // ============================================================
 
 function renderNavigation() {
@@ -1246,7 +1283,7 @@ function updateDonaturBadge() {
 }
 
 // ============================================================
-// 8. RENDER DASHBOARD
+// 9. RENDER DASHBOARD
 // ============================================================
 
 function renderDashboard() {
@@ -1359,7 +1396,7 @@ function renderDashboard() {
 }
 
 // ============================================================
-// 9. RENDER CHARTS
+// 10. RENDER CHARTS
 // ============================================================
 
 function renderCharts() {
@@ -1471,110 +1508,87 @@ function renderCharts() {
 }
 
 // ============================================================
-// 10. LOAD DONATUR REMINDER - via google.script.run
+// 11. LOAD DONATUR REMINDER
 // ============================================================
 
-function loadDonaturReminder() {
+async function loadDonaturReminder() {
     const container = document.getElementById('donaturReminder');
     if (!container) return;
     
-    google.script.run
-        .withSuccessHandler(function(result) {
-            if (result.success && result.donators && result.donators.length > 0) {
-                donaturData = result.donators;
-                
-                // Tampilkan 5 donatur teratas yang belum donasi
-                const belumDonasi = result.donators
-                    .filter(d => d.totalDonasi === 0)
-                    .slice(0, 5);
-                
-                const topDonatur = result.donators.slice(0, 5);
-                
-                if (belumDonasi.length > 0) {
-                    container.innerHTML = `
-                        <div style="margin-bottom:12px;font-weight:600;color:var(--secondary);">
-                            ⚠️ ${belumDonasi.length} donatur belum berdonasi:
+    try {
+        const result = await callApi('getDonators');
+        
+        if (result.success && result.donators && result.donators.length > 0) {
+            donaturData = result.donators;
+            
+            // Tampilkan 5 donatur teratas yang belum donasi
+            const belumDonasi = result.donators
+                .filter(d => d.totalDonasi === 0)
+                .slice(0, 5);
+            
+            const topDonatur = result.donators.slice(0, 5);
+            
+            if (belumDonasi.length > 0) {
+                container.innerHTML = `
+                    <div style="margin-bottom:12px;font-weight:600;color:var(--secondary);">
+                        ⚠️ ${belumDonasi.length} donatur belum berdonasi:
+                    </div>
+                    ${belumDonasi.map(d => `
+                        <div class="donatur-item">
+                            <span class="donatur-name">${d.name}</span>
+                            <span class="donatur-info">${d.id ? 'ID: ' + d.id : ''}</span>
+                            <span class="donatur-status status-belum">⏳ Belum Donasi</span>
                         </div>
-                        ${belumDonasi.map(d => `
-                            <div class="donatur-item">
-                                <span class="donatur-name">${d.name}</span>
-                                <span class="donatur-info">${d.id ? 'ID: ' + d.id : ''}</span>
-                                <span class="donatur-status status-belum">⏳ Belum Donasi</span>
-                            </div>
-                        `).join('')}
-                        <div style="margin-top:12px;font-size:0.8rem;color:var(--text-light);">
-                            🏆 Top Donatur: ${topDonatur.map(d => d.name).join(', ')}
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = `
-                        <div style="padding:10px 0;color:#2ECC71;font-weight:600;">
-                            ✅ Semua donatur sudah berdonasi!
-                        </div>
-                        <div style="margin-top:10px;font-size:0.85rem;color:var(--text-light);">
-                            🏆 Top Donatur: ${topDonatur.map(d => d.name).join(', ')}
-                        </div>
-                    `;
-                }
+                    `).join('')}
+                    <div style="margin-top:12px;font-size:0.8rem;color:var(--text-light);">
+                        🏆 Top Donatur: ${topDonatur.map(d => d.name).join(', ')}
+                    </div>
+                `;
             } else {
                 container.innerHTML = `
-                    <div style="text-align:center;padding:20px;color:var(--text-light);">
-                        <i class="fas fa-users" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:10px;"></i>
-                        Belum ada data donatur
+                    <div style="padding:10px 0;color:#2ECC71;font-weight:600;">
+                        ✅ Semua donatur sudah berdonasi!
+                    </div>
+                    <div style="margin-top:10px;font-size:0.85rem;color:var(--text-light);">
+                        🏆 Top Donatur: ${topDonatur.map(d => d.name).join(', ')}
                     </div>
                 `;
             }
-        })
-        .withFailureHandler(function(error) {
+        } else {
             container.innerHTML = `
-                <div style="text-align:center;padding:20px;color:#E74C3C;">
-                    ❌ Gagal memuat data donatur: ${error.message}
+                <div style="text-align:center;padding:20px;color:var(--text-light);">
+                    <i class="fas fa-users" style="font-size:2rem;opacity:0.3;display:block;margin-bottom:10px;"></i>
+                    Belum ada data donatur
                 </div>
             `;
-        })
-        .getDonators(); // Nama fungsi di appscript.gs
+        }
+        
+    } catch (error) {
+        container.innerHTML = `
+            <div style="text-align:center;padding:20px;color:#E74C3C;">
+                ❌ Gagal memuat data donatur: ${error.message}
+            </div>
+        `;
+    }
 }
 
 // ============================================================
-// 11. RENDER SHEET - via google.script.run
+// 12. RENDER SHEET
 // ============================================================
 
 function renderSheet(sheetName) {
-    // Tampilkan loading
-    mainContent.innerHTML = `
-        <div style="text-align:center;padding:40px;">
-            <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:var(--primary);"></i>
-            <p style="margin-top:15px;color:var(--text-light);">Memuat data sheet...</p>
-        </div>
-    `;
+    if (!allData || !allData.data || !allData.data[sheetName]) {
+        mainContent.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-file-alt"></i>
+                <h3>Sheet "${sheetName}" tidak ditemukan</h3>
+                <p>Sheet mungkin telah dihapus atau diubah namanya</p>
+            </div>
+        `;
+        return;
+    }
     
-    google.script.run
-        .withSuccessHandler(function(result) {
-            if (result.success) {
-                renderSheetData(result.data, sheetName);
-            } else {
-                mainContent.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-file-alt"></i>
-                        <h3>Sheet "${sheetName}" tidak ditemukan</h3>
-                        <p>${result.error || 'Sheet mungkin telah dihapus atau diubah namanya'}</p>
-                    </div>
-                `;
-            }
-        })
-        .withFailureHandler(function(error) {
-            mainContent.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-exclamation-triangle" style="color:#E74C3C;"></i>
-                    <h3>Gagal Memuat Sheet</h3>
-                    <p>${error.message}</p>
-                </div>
-            `;
-        })
-        .getSheetData(sheetName); // Nama fungsi di appscript.gs
-}
-
-function renderSheetData(sheet, sheetName) {
+    const sheet = allData.data[sheetName];
     const rows = sheet.rows || [];
     const headers = sheet.headers || [];
     const summary = sheet.summary || {};
@@ -1692,10 +1706,10 @@ function renderSheetData(sheet, sheetName) {
 }
 
 // ============================================================
-// 12. RENDER DONATUR - via google.script.run
+// 13. RENDER DONATUR
 // ============================================================
 
-function renderDonatur() {
+async function renderDonatur() {
     mainContent.innerHTML = `
         <div class="donatur-box">
             <h3><i class="fas fa-users" style="color:var(--primary)"></i> 👥 Daftar Donatur</h3>
@@ -1706,64 +1720,64 @@ function renderDonatur() {
         </div>
     `;
     
-    google.script.run
-        .withSuccessHandler(function(result) {
-            if (result.success && result.donators) {
-                const donators = result.donators;
-                const totalDonasi = result.totalDonasiFormatted || formatRupiah(0);
-                
-                let html = `
-                    <div class="donatur-box">
-                        <h3><i class="fas fa-users" style="color:var(--primary)"></i> 👥 Daftar Donatur (${donators.length})</h3>
-                        <div style="display:flex;gap:20px;flex-wrap:wrap;padding:10px 0 15px 0;border-bottom:2px solid #f0f0f0;margin-bottom:15px;">
-                            <div><strong>Total Donatur:</strong> ${donators.length}</div>
-                            <div><strong>Total Donasi:</strong> ${totalDonasi}</div>
-                        </div>
-                        <div style="margin-bottom:15px;">
-                            <input class="table-search" placeholder="🔍 Cari donatur..." 
-                                   oninput="filterDonatur(this.value)" style="width:100%;">
-                        </div>
-                        <div id="donaturList">
-                            ${donators.map(d => `
-                                <div class="donatur-item" data-name="${d.name.toLowerCase()}">
-                                    <span class="donatur-name">${d.name}</span>
-                                    <span class="donatur-info">${d.id ? 'ID: ' + d.id : ''}</span>
-                                    <span class="donatur-info">${d.sheets ? d.sheets.join(', ') : ''}</span>
-                                    <span>${formatRupiah(d.totalDonasi)}</span>
-                                    <span class="donatur-status ${d.totalDonasi > 0 ? 'status-sudah' : 'status-belum'}">
-                                        ${d.totalDonasi > 0 ? '✅ Donasi' : '⏳ Belum'}
-                                    </span>
-                                </div>
-                            `).join('')}
-                        </div>
+    try {
+        const result = await callApi('getDonators');
+        
+        if (result.success && result.donators) {
+            const donators = result.donators;
+            const totalDonasi = result.totalDonasiFormatted || formatRupiah(0);
+            
+            let html = `
+                <div class="donatur-box">
+                    <h3><i class="fas fa-users" style="color:var(--primary)"></i> 👥 Daftar Donatur (${donators.length})</h3>
+                    <div style="display:flex;gap:20px;flex-wrap:wrap;padding:10px 0 15px 0;border-bottom:2px solid #f0f0f0;margin-bottom:15px;">
+                        <div><strong>Total Donatur:</strong> ${donators.length}</div>
+                        <div><strong>Total Donasi:</strong> ${totalDonasi}</div>
                     </div>
-                `;
-                
-                mainContent.innerHTML = html;
-            } else {
-                mainContent.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-users"></i>
-                        <h3>Belum ada data donatur</h3>
-                        <p>Data donatur akan muncul setelah ada data di spreadsheet</p>
+                    <div style="margin-bottom:15px;">
+                        <input class="table-search" placeholder="🔍 Cari donatur..." 
+                               oninput="filterDonatur(this.value)" style="width:100%;">
                     </div>
-                `;
-            }
-        })
-        .withFailureHandler(function(error) {
-            mainContent.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-exclamation-triangle" style="color:#E74C3C;"></i>
-                    <h3>Gagal Memuat Donatur</h3>
-                    <p>${error.message}</p>
+                    <div id="donaturList">
+                        ${donators.map(d => `
+                            <div class="donatur-item" data-name="${d.name.toLowerCase()}">
+                                <span class="donatur-name">${d.name}</span>
+                                <span class="donatur-info">${d.id ? 'ID: ' + d.id : ''}</span>
+                                <span class="donatur-info">${d.sheets ? d.sheets.join(', ') : ''}</span>
+                                <span>${formatRupiah(d.totalDonasi)}</span>
+                                <span class="donatur-status ${d.totalDonasi > 0 ? 'status-sudah' : 'status-belum'}">
+                                    ${d.totalDonasi > 0 ? '✅ Donasi' : '⏳ Belum'}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
             `;
-        })
-        .getDonators(); // Nama fungsi di appscript.gs
+            
+            mainContent.innerHTML = html;
+        } else {
+            mainContent.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <h3>Belum ada data donatur</h3>
+                    <p>Data donatur akan muncul setelah ada data di spreadsheet</p>
+                </div>
+            `;
+        }
+        
+    } catch (error) {
+        mainContent.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-triangle" style="color:#E74C3C;"></i>
+                <h3>Gagal Memuat Donatur</h3>
+                <p>${error.message}</p>
+            </div>
+        `;
+    }
 }
 
 // ============================================================
-// 13. HELPER FUNCTIONS
+// 14. HELPER FUNCTIONS
 // ============================================================
 
 function formatRupiah(amount) {
@@ -1810,7 +1824,7 @@ function filterDonatur(query) {
 }
 
 // ============================================================
-// 14. AUTO REFRESH
+// 15. AUTO REFRESH
 // ============================================================
 
 function startAutoRefresh() {
@@ -1821,7 +1835,6 @@ function startAutoRefresh() {
     if (CONFIG.AUTO_REFRESH && CONFIG.AUTO_REFRESH.enabled) {
         const interval = CONFIG.AUTO_REFRESH.interval || 300000;
         refreshInterval = setInterval(() => {
-            // Refresh in background
             refreshData();
         }, interval);
     }
@@ -1842,39 +1855,35 @@ window.addEventListener('online', function() {
 });
 
 // ============================================================
-// 15. KEYBOARD SHORTCUTS
+// 16. KEYBOARD SHORTCUTS
 // ============================================================
 
 document.addEventListener('keydown', function(e) {
-    // Ctrl+R atau Cmd+R untuk refresh
     if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
         e.preventDefault();
         refreshData();
     }
-    // Escape untuk close toast
     if (e.key === 'Escape') {
         document.querySelectorAll('.toast').forEach(t => t.remove());
     }
 });
 
 // ============================================================
-// 16. INIT
+// 17. INIT
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Load data
     loadData();
-    
-    // Start auto refresh
     startAutoRefresh();
     
     console.log('✅ Dashboard Lazismu PRM Gempolpading siap!');
     console.log('📊 Repository:', CONFIG.GITHUB_REPO);
+    console.log('🔗 Apps Script:', CONFIG.APP_SCRIPT_URL);
     console.log('🔄 Auto refresh:', CONFIG.AUTO_REFRESH.enabled ? 'ON (' + (CONFIG.AUTO_REFRESH.interval / 1000) + 's)' : 'OFF');
 });
 
 // ============================================================
-// 17. EXPOSE FUNCTIONS TO GLOBAL
+// 18. EXPOSE FUNCTIONS TO GLOBAL
 // ============================================================
 
 window.loadData = loadData;
